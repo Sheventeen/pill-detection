@@ -69,21 +69,21 @@ export default function Header() {
                   alt="Invis.io text"
                   className="w-full h-auto absolute -right-15 bottom-5 logo-color"
                 /> */}
-                <h1 className="text-2xl font-bold text-indigo-700">Med-AI</h1>
+                <h1 className="text-2xl font-bold text-indigo-600">Med-AI</h1>
               </Link>
             </div>
-            <nav className="flex gap-8 font-medium items-center text-[17.5px] text-indigo-700">
-              <Link href="#" className="hover:text-indigo-300">
+            <nav className="flex gap-8 font-medium items-center text-[17.5px] text-indigo-600">
+              <Link href="#" className="hover:text-indigo-700">
                 About us
               </Link>
-              <Link href="#features" className="hover:text-indigo-300">
+              <Link href="#features" className="hover:text-indigo-700">
                 Features
               </Link>
-              <Link href="#call-to-action" className="hover:text-indigo-300">
+              <Link href="#call-to-action" className="hover:text-indigo-700">
                 Updates
               </Link>
               <Link href="/login">
-                <button className="font-medium text-[17.5px] text-white px-5 py-2 hover:cursor-pointer rounded-xl bg-indigo-700">
+                <button className="font-medium text-[17.5px] text-white px-5 py-2 hover:cursor-pointer rounded-lg bg-indigo-600 hover:bg-indigo-700">
                   Sign in
                 </button>
               </Link>

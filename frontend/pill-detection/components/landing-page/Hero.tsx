@@ -13,7 +13,7 @@ export const Hero = () => {
           href="#uploader"
           className="px-8 py-3 text-lg font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition duration-150 shadow-lg"
         >
-          Start Analysis Now
+          Get Started
         </a>
       </div>
     </section>
