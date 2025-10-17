@@ -1,5 +1,6 @@
 import express from 'express';
 import bcryptjs from 'bcryptjs';
+import { validateGmail, validatePassword } from '../misc/validateRegex.js';
 import { setJWTandCookie } from '../misc/createJWTandCookie.js';
 import { User } from '../models/user.model.js';
 
@@ -15,6 +16,13 @@ export const signup = async(req, res) => {
     if (password !== sndPassword){
         throw new Error("Password fields much match");
     }
+    if (!validateGmail(email)){
+      throw new Error('Must use valid email address');
+    }
+    if (!validatePassword(password)){
+        throw new Error("Must enter all fields for password");
+    }
+
     const hashed_password = await bcryptjs.hash(password, 10);
     const user = new User({
         fName,
@@ -33,7 +41,6 @@ export const login = async (req, res) => {
     if(!email || !password){
         throw new Error("Please enter all fields");
     }
-    
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -53,6 +60,39 @@ export const login = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-export const logout = async (req, res) => {
-    
+export const logout = (req, res) => {
+    try {
+      res.clearCookie("JWTToken");
+      res.status(200).json({success: true, message: "Logout Successful"})
+    } catch (error) {
+      res.status(501).json({success: false, message: error.message});
+    }
+};
+export const checkAuthorized = async (req, res) => {
+  try {
+    const user = await User.findById(req.userID).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+export const homePage = (req, res) => {
+  try {
+    const user = req.user;
+    res.status(200).json({
+      success: true,
+      message: `Welcome to your home page, ${user.fName}!`,
+      user,
+    });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 }

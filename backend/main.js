@@ -10,7 +10,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 const PORT = 5812;
 app.use(express.json())
 app.use('/api/auth', authRoutes);
-
+app.use('/api/main', authRoutes);
 try {
     mongoose.connect(MONGODB_URI)
     .then(console.log("connected successfully"))
