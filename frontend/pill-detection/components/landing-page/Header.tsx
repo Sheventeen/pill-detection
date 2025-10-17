@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useRouter } from "next/router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, X} from "lucide-react";
 import Link from "next/link";
 
 export default function Header() {
