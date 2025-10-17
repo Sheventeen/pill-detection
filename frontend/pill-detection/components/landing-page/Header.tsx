@@ -82,7 +82,7 @@ export default function Header() {
               <Link href="#call-to-action" className="hover:text-indigo-700">
                 Updates
               </Link>
-              <Link href="/login">
+              <Link href="/sign-in">
                 <button className="font-medium text-[17.5px] text-white px-5 py-2 hover:cursor-pointer rounded-lg bg-indigo-600 hover:bg-indigo-700">
                   Sign in
                 </button>

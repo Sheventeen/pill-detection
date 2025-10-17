@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const Hero = () => {
   return (
     <section className="text-center pt-10 pb-16">
@@ -9,12 +11,12 @@ export const Hero = () => {
         assist in early diagnosis.
       </p>
       <div className="mt-10 flex justify-center">
-        <a
-          href="#uploader"
+        <Link
+          href="/sign-in"
           className="px-8 py-3 text-lg font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition duration-150 shadow-lg"
         >
           Get Started
-        </a>
+        </Link>
       </div>
     </section>
   );
