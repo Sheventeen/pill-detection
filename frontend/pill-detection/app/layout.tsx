@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MedAI Disease Detection",
+  title: "Med-AI Disease Detection",
   description: "AI-powered tool for disease detection in medical images",
 };
 

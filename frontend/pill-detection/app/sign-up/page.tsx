@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 
 export default function Page() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -14,11 +16,11 @@ export default function Page() {
     e.preventDefault();
     setError(null);
 
-    if (!email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword || !firstName || !lastName) {
       setError("Please fill out all fields.");
       return;
     }
-    if (password.length < 6) {
+    if (password.length < 8) {
       setError("Password must be at least 6 characters long.");
       return;
     }
@@ -64,12 +66,48 @@ export default function Page() {
               Create Your Account
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              Get started with the Pneumonia Detection AI Tool.
+              Get started with the Disease Detection AI Tool.
             </p>
           </div>
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-4">
+              <div>
+                <label htmlFor="firstName" className="sr-only">
+                  First name
+                </label>
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  disabled={isLoading}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="lastName" className="sr-only">
+                  Last name
+                </label>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  disabled={isLoading}
+                />
+              </div>
+
               <div>
                 <label htmlFor="email" className="sr-only">
                   Email address
@@ -88,7 +126,6 @@ export default function Page() {
                 />
               </div>
 
-              {/* Password Input */}
               <div>
                 <label htmlFor="password" className="sr-only">
                   Password
@@ -100,14 +137,13 @@ export default function Page() {
                   autoComplete="new-password"
                   required
                   className="w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Password (Min. 6 characters)"
+                  placeholder="Password (Min. 8 characters)"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                 />
               </div>
 
-              {/* Confirm Password Input */}
               <div>
                 <label htmlFor="confirmPassword" className="sr-only">
                   Confirm Password
