@@ -25,8 +25,8 @@ type ConnectionStatus =
 export default function MediTalkAgent() {
   const [status, setStatus] = useState<ConnectionStatus>("Disconnected");
   const [participantID, setParticipantID] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<string | null>(null);
 
-  // LiveKit Setup
   const roomName = "meditalk-room";
   const username = "meditalk-user";
 
@@ -38,7 +38,9 @@ export default function MediTalkAgent() {
       })
   );
 
-  // Connect to LiveKit
+  /* -------------------------------
+     Connect to LiveKit
+  -------------------------------- */
   useEffect(() => {
     let active = true;
     (async () => {
@@ -78,29 +80,11 @@ export default function MediTalkAgent() {
   }, [roomInstance]);
 
   /* -------------------------------
-     File Upload + Preview (Left Panel)
+     File Upload + Preview
   -------------------------------- */
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const sendFileToAgent = async (file: File) => {
-    if (!roomInstance.localParticipant) return;
-
-    try {
-      const info = await roomInstance.localParticipant.sendFile(file, {
-        topic: "xray-image", // must match backend agent's registered topic
-        mimeType: file.type,
-        onProgress: (progress) => {
-          console.log("Sending file progress:", Math.ceil(progress * 100), "%");
-        },
-      });
-
-      console.log("File sent with stream ID:", info.id);
-    } catch (err) {
-      console.error("Failed to send file:", err);
-    }
-  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -108,14 +92,35 @@ export default function MediTalkAgent() {
 
     setSelectedFile(file);
     setPreviewUrl(URL.createObjectURL(file));
+    setUploadStatus("Sending image to AI agent...");
 
-    // Send to LiveKit agent
-    await sendFileToAgent(file);
+    // Send file to LiveKit agent
+    if (roomInstance.localParticipant) {
+      try {
+        const info = await roomInstance.localParticipant.sendFile(file, {
+          topic: "xray-image", // must match agent's topic
+          mimeType: file.type,
+          onProgress: (progress) =>
+            console.log(
+              "Sending file progress:",
+              Math.ceil(progress * 100),
+              "%"
+            ),
+        });
+
+        console.log("File sent with stream ID:", info.id);
+        setUploadStatus("Image sent. Waiting for AI analysis...");
+      } catch (err) {
+        console.error("Failed to send file:", err);
+        setUploadStatus("Failed to send image");
+      }
+    }
   };
 
   const handleRemoveImage = () => {
     setSelectedFile(null);
     setPreviewUrl(null);
+    setUploadStatus(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -150,6 +155,11 @@ export default function MediTalkAgent() {
                   Image: {selectedFile?.name} (
                   {Math.round((selectedFile?.size || 0) / 1024)} KB)
                 </div>
+                {uploadStatus && (
+                  <div className="absolute bottom-6 right-6 text-sm text-gray-700 bg-white px-3 py-1 rounded shadow">
+                    {uploadStatus}
+                  </div>
+                )}
               </>
             ) : (
               <div className="text-center p-10">
