@@ -305,16 +305,66 @@ export default function MediTalkAgent() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  //   const file = e.target.files?.[0];
+  //   if (!file) return;
+
+  //   setSelectedFile(file);
+  //   setPreviewUrl(URL.createObjectURL(file));
+  //   setUploadStatus("Sending image to AI agent...");
+
+  //   if (roomInstance.localParticipant) {
+  //     try {
+  //       const info = await roomInstance.localParticipant.sendFile(file, {
+  //         topic: "xray-image",
+  //         mimeType: file.type,
+  //         onProgress: (progress) =>
+  //           console.log(
+  //             "Sending file progress:",
+  //             Math.ceil(progress * 100),
+  //             "%"
+  //           ),
+  //       });
+
+  //       console.log("File sent with stream ID:", info.id);
+  //       setUploadStatus("Image sent. Waiting for AI analysis...");
+  //     } catch (err) {
+  //       console.error("Failed to send file:", err);
+  //       setUploadStatus("Failed to send image");
+  //     }
+  //   }
+  // };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setSelectedFile(file);
     setPreviewUrl(URL.createObjectURL(file));
-    setUploadStatus("Sending image to AI agent...");
+    setUploadStatus("Sending image to external API...");
 
-    if (roomInstance.localParticipant) {
-      try {
+    try {
+      // --- Send file to external API first ---
+      // const formData = new FormData();
+      // formData.append("detail", file);
+
+      // const response = await fetch(
+      //   "https://intended-fun-airlines-eligibility.trycloudflare.com",
+      //   {
+      //     method: "POST",
+      //     body: formData,
+      //   }
+      // );
+
+      // if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+      // const data = await response.json(); // assuming JSON response
+      // console.log("Response from external API:", data);
+      // setUploadStatus(`External API response received`);
+
+      // --- After successful external API response, connect/send to LiveKit ---
+      if (roomInstance.localParticipant) {
         const info = await roomInstance.localParticipant.sendFile(file, {
           topic: "xray-image",
           mimeType: file.type,
@@ -326,12 +376,12 @@ export default function MediTalkAgent() {
             ),
         });
 
-        console.log("File sent with stream ID:", info.id);
-        setUploadStatus("Image sent. Waiting for AI analysis...");
-      } catch (err) {
-        console.error("Failed to send file:", err);
-        setUploadStatus("Failed to send image");
+        console.log("File sent to LiveKit with stream ID:", info.id);
+        setUploadStatus("Image sent to AI agent.");
       }
+    } catch (err) {
+      console.error("Error during external API or LiveKit upload:", err);
+      setUploadStatus("Failed to process image");
     }
   };
 
