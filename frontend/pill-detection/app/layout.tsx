@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Med-AI Disease Detection",
+  title: "MediTalk - AI Medical Image Analysis",
   description: "AI-powered tool for disease detection in medical images",
 };
 
