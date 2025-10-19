@@ -1,28 +1,82 @@
+// import {
+//   type JobContext,
+//   WorkerOptions,
+//   cli,
+//   defineAgent,
+//   voice,
+// } from "@livekit/agents";
+// import * as google from "@livekit/agents-plugin-google";
+// import * as elevenlabs from "@livekit/agents-plugin-elevenlabs";
+// import { BackgroundVoiceCancellation } from "@livekit/noise-cancellation-node";
+// import { fileURLToPath } from "node:url";
+// import dotenv from "dotenv";
+// dotenv.config({ path: ".env" });
+// class Assistant extends voice.Agent {
+//   constructor() {
+//     super({
+//       instructions: "You are a helpful voice AI assistant.",
+//     });
+//   }
+// }
+// export default defineAgent({
+//   entry: async (ctx: JobContext) => {
+//     const session = new voice.AgentSession({
+//       llm: new google.beta.realtime.RealtimeModel({
+//         model: "gemini-2.5-flash-native-audio-preview-09-2025",
+//         voice: "Puck",
+//         temperature: 0.8,
+//         instructions: "You are a helpful assistant",
+//       }),
+//       tts: new elevenlabs.TTS({
+//         apiKey: process.env.ELEVENLABS_API_KEY || "",
+//         voice: {
+//           id: "Z3R5wn05IrDiVCyEkUrK",
+//           name: "Arabella",
+//           category: "Narrative & Story",
+//         },
+//       }),
+//     });
+//     await session.start({
+//       agent: new Assistant(),
+//       room: ctx.room,
+//       inputOptions: {
+//         noiseCancellation: BackgroundVoiceCancellation(),
+//       },
+//     });
+//     await ctx.connect();
+//     const handle = session.generateReply({
+//       instructions:
+//         "Greet the user and offer your assistance. You should start by speaking in English.",
+//     });
+//     await handle.waitForPlayout();
+//   },
+// });
+// cli.runApp(new WorkerOptions({ agent: fileURLToPath(import.meta.url) }));
 import { WorkerOptions, cli, defineAgent, voice, } from "@livekit/agents";
-import * as google from "@livekit/agents-plugin-google";
+import * as livekit from "@livekit/agents-plugin-livekit";
+import * as silero from "@livekit/agents-plugin-silero";
 import { BackgroundVoiceCancellation } from "@livekit/noise-cancellation-node";
 import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
 dotenv.config({ path: ".env" });
-class Assistant extends voice.Agent {
-    constructor() {
-        super({
+export default defineAgent({
+    prewarm: async (proc) => {
+        proc.userData.vad = await silero.VAD.load();
+    },
+    entry: async (ctx) => {
+        const vad = ctx.proc.userData.vad;
+        const assistant = new voice.Agent({
             instructions: "You are a helpful voice AI assistant.",
         });
-    }
-}
-export default defineAgent({
-    entry: async (ctx) => {
         const session = new voice.AgentSession({
-            llm: new google.beta.realtime.RealtimeModel({
-                model: "gemini-2.5-flash-native-audio-preview-09-2025",
-                voice: "Puck",
-                temperature: 0.8,
-                instructions: "You are a helpful assistant",
-            }),
+            vad,
+            stt: "assemblyai/universal-streaming:en",
+            llm: "openai/gpt-4.1-mini",
+            tts: "cartesia/sonic-2:9626c31c-bec5-4cca-baa8-f8ba9e84c8bc",
+            turnDetection: new livekit.turnDetector.MultilingualModel(),
         });
         await session.start({
-            agent: new Assistant(),
+            agent: assistant,
             room: ctx.room,
             inputOptions: {
                 // For telephony applications, use `TelephonyBackgroundVoiceCancellation` for best results
@@ -31,9 +85,8 @@ export default defineAgent({
         });
         await ctx.connect();
         const handle = session.generateReply({
-            instructions: "Greet the user and offer your assistance. You should start by speaking in English.",
+            instructions: "Greet the user and offer your assistance.",
         });
-        await handle.waitForPlayout();
     },
 });
 cli.runApp(new WorkerOptions({ agent: fileURLToPath(import.meta.url) }));

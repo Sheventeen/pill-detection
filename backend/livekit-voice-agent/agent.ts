@@ -6,6 +6,7 @@ import {
   voice,
 } from "@livekit/agents";
 import * as google from "@livekit/agents-plugin-google";
+import * as elevenlabs from "@livekit/agents-plugin-elevenlabs";
 import { BackgroundVoiceCancellation } from "@livekit/noise-cancellation-node";
 import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
@@ -20,15 +21,36 @@ class Assistant extends voice.Agent {
   }
 }
 
+const tts_voice = new elevenlabs.TTS({
+  apiKey: process.env.ELEVENLABS_API_KEY || "",
+  voice: {
+    id: "Z3R5wn05IrDiVCyEkUrK",
+    name: "Arabella",
+    category: "Narrative & Story",
+  },
+});
+
+const elevenlabsTTS = new elevenlabs.TTS({
+  apiKey: process.env.ELEVENLABS_API_KEY || "",
+  voice: {
+    id: "Z3R5wn05IrDiVCyEkUrK",
+    name: "Arabella",
+    category: "Narrative & Story",
+  },
+  modelID: "eleven_turbo_v2_5",
+});
+
+const geminiLLM = new google.beta.realtime.RealtimeModel({
+  model: "gemini-2.5-flash-native-audio-preview-09-2025",
+  temperature: 0.8,
+  instructions: "You are a helpful assistant",
+});
+
 export default defineAgent({
   entry: async (ctx: JobContext) => {
     const session = new voice.AgentSession({
-      llm: new google.beta.realtime.RealtimeModel({
-        model: "gemini-2.5-flash-native-audio-preview-09-2025",
-        voice: "Puck",
-        temperature: 0.8,
-        instructions: "You are a helpful assistant",
-      }),
+      tts: elevenlabsTTS,
+      llm: geminiLLM,
     });
 
     await session.start({
