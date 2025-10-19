@@ -6,7 +6,7 @@ MediTalk is an AI-driven platform designed to assist healthcare professionals an
 
 ---
 
-## 🌟 Features
+## Features
 
 - **Instant X-ray Analysis**: Upload chest X-ray images to receive AI-assisted preliminary diagnosis.
 - **Voice Assistant Interaction**: Communicate with the AI agent for guidance, insights, and image analysis explanations.
@@ -27,7 +27,7 @@ MediTalk is an AI-driven platform designed to assist healthcare professionals an
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Frontend**:
   - Next.js (React-based)
@@ -37,6 +37,7 @@ MediTalk is an AI-driven platform designed to assist healthcare professionals an
 - **Backend**:
   - Express
   - REST API endpoints for authentication and image analysis
+  - MonogoDB
 - **AI/ML**:
   - Gemini
 - **Real-Time Communication**:
@@ -44,5 +45,11 @@ MediTalk is an AI-driven platform designed to assist healthcare professionals an
 
 ---
 
-## 📁 Project Structure
+## Project Structure
+- **frontend**
+- **backend**
+    - **livekit-voice-agent**
+    - **express**
+    
+
 
