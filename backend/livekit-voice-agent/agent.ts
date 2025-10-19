@@ -35,7 +35,6 @@ export default defineAgent({
       agent: new Assistant(),
       room: ctx.room,
       inputOptions: {
-        // For telephony applications, use `TelephonyBackgroundVoiceCancellation` for best results
         noiseCancellation: BackgroundVoiceCancellation(),
       },
     });
