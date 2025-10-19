@@ -15,7 +15,7 @@ MediTalk is an AI-driven platform designed to assist healthcare professionals an
 
 ---
 
-## 🎨 Design & Tech Highlights
+## Design & Tech Highlights
 
 - **Main Color**: `#009688` (Green)
 - **Contrast Color**: Soft light gray (`#F1F1F1`) for cards and backgrounds.
@@ -51,5 +51,6 @@ MediTalk is an AI-driven platform designed to assist healthcare professionals an
     - **livekit-voice-agent**
     - **express**
     
+
 
 
