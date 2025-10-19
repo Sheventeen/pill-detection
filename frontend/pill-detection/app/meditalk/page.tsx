@@ -299,71 +299,47 @@ export default function MediTalkAgent() {
   }, [roomInstance]);
 
   /* -------------------------------
-     File Upload + Preview
-  -------------------------------- */
+   File Upload + Preview
+-------------------------------- */
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  // const [uploadStatus, setUploadStatus] = useState<string | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-
-  //   const file = e.target.files?.[0];
-  //   if (!file) return;
-
-  //   setSelectedFile(file);
-  //   setPreviewUrl(URL.createObjectURL(file));
-  //   setUploadStatus("Sending image to AI agent...");
-
-  //   if (roomInstance.localParticipant) {
-  //     try {
-  //       const info = await roomInstance.localParticipant.sendFile(file, {
-  //         topic: "xray-image",
-  //         mimeType: file.type,
-  //         onProgress: (progress) =>
-  //           console.log(
-  //             "Sending file progress:",
-  //             Math.ceil(progress * 100),
-  //             "%"
-  //           ),
-  //       });
-
-  //       console.log("File sent with stream ID:", info.id);
-  //       setUploadStatus("Image sent. Waiting for AI analysis...");
-  //     } catch (err) {
-  //       console.error("Failed to send file:", err);
-  //       setUploadStatus("Failed to send image");
-  //     }
-  //   }
-  // };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setSelectedFile(file);
-    setPreviewUrl(URL.createObjectURL(file));
+    const imageUrl = URL.createObjectURL(file);
+    setPreviewUrl(imageUrl);
     setUploadStatus("Sending image to external API...");
+    setAnalysisResult(null); // reset previous result
+
+    const formData = new FormData();
+    formData.append("file", file);
 
     try {
-      // --- Send file to external API first ---
-      // const formData = new FormData();
-      // formData.append("detail", file);
+      // --- Step 1: Send the image to backend for analysis ---
+      const response = await fetch("http://localhost:5812/api/analyze", {
+        method: "POST",
+        body: formData,
+      });
 
-      // const response = await fetch(
-      //   "https://intended-fun-airlines-eligibility.trycloudflare.com",
-      //   {
-      //     method: "POST",
-      //     body: formData,
-      //   }
-      // );
+      if (!response.ok) {
+        const text = await response.text(); // raw error
+        throw new Error(`Server responded with ${response.status}: ${text}`);
+      }
 
-      // if (!response.ok) throw new Error(`Server error: ${response.status}`);
+      const result = await response.json();
+      console.log("Backend analysis result:", result);
 
-      // const data = await response.json(); // assuming JSON response
-      // console.log("Response from external API:", data);
-      // setUploadStatus(`External API response received`);
+      // Display result in UI
+      setAnalysisResult(result.description || JSON.stringify(result));
+      setUploadStatus("Image analyzed successfully. Connecting to AI agent...");
 
-      // --- After successful external API response, connect/send to LiveKit ---
+      // --- Step 2: Send to LiveKit after analysis ---
       if (roomInstance.localParticipant) {
         const info = await roomInstance.localParticipant.sendFile(file, {
           topic: "xray-image",
@@ -379,9 +355,10 @@ export default function MediTalkAgent() {
         console.log("File sent to LiveKit with stream ID:", info.id);
         setUploadStatus("Image sent to AI agent.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error during external API or LiveKit upload:", err);
       setUploadStatus("Failed to process image");
+      setAnalysisResult(err.message);
     }
   };
 
@@ -450,6 +427,12 @@ export default function MediTalkAgent() {
                   </label>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">PNG or JPG</p>
+              </div>
+            )}
+            {analysisResult && (
+              <div className="mt-4 p-4 bg-white rounded-xl shadow-md text-gray-800">
+                <h3 className="font-semibold mb-2">Analysis Result:</h3>
+                <p>{analysisResult}</p>
               </div>
             )}
           </div>
