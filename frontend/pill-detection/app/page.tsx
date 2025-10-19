@@ -129,7 +129,7 @@ const LandingPage: React.FC = () => {
             <Image
               src="/images/nurse.jpg"
               alt="AI health technology"
-              width={400}
+              width={500}
               height={400}
               className="rounded-2xl shadow-lg"
             />
@@ -141,8 +141,8 @@ const LandingPage: React.FC = () => {
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed">
               MediTalk bridges the gap between AI innovation and healthcare
-              delivery — empowering professionals with smarter, faster, and more
-              reliable analysis tools.
+              delivery by empowering users with smarter and faster analysis
+              tools.
             </p>
             <button className="bg-[#009688] hover:bg-[#00796B] text-white px-6 py-3 rounded-xl font-semibold shadow-md transition">
               Learn More
