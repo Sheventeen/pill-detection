@@ -2,21 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-// Make sure the image import path is correct:
-// import Image from "next/image";
-// import { useRouter } from "next/navigation";
-// import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-// import { FIREBASE_AUTH } from "../../../firebase/clientApp";
-// import xrayIcon from "../assets/xray-icon.png";
 
-// (Assuming all imports above are correct, only the function signature changes)
-
-// Change function name from LoginPage to Page
 export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  // const router = useRouter(); // Uncommented in the final version
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
