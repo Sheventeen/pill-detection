@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
 
 dotenv.config({ path: ".env" });
@@ -8,6 +9,14 @@ dotenv.config({ path: ".env" });
 const app = express();
 const MONGODB_URI = process.env.MONGODB_URI;
 const PORT = 5812;
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/main", authRoutes);

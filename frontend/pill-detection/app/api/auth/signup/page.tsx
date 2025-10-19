@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter();
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -21,7 +24,7 @@ export default function Page() {
       return;
     }
     if (password.length < 8) {
-      setError("Password must be at least 6 characters long.");
+      setError("Password must be at least 8 characters long.");
       return;
     }
     if (password !== confirmPassword) {
@@ -32,16 +35,34 @@ export default function Page() {
     setIsLoading(true);
 
     try {
-      console.log("Mock Sign up successful for:", email);
-      alert("Registration successful! Redirecting to login.");
-    } catch (error: any) {
-      console.error("Error during sign up:", error);
+      const res = await fetch("http://localhost:5812/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // include cookies if backend sets JWT
+        body: JSON.stringify({
+          fName: firstName,
+          lName: lastName,
+          email,
+          password,
+          sndPassword: confirmPassword,
+        }),
+      });
 
-      if (error.code === "auth/email-already-in-use") {
-        setError("This email address is already in use.");
-      } else {
-        setError("Sign up failed. Please try again.");
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Signup failed. Please try again.");
+        return;
       }
+
+      // Success
+      alert("Registration successful! Redirecting to login.");
+      router.push("/api/auth/login");
+    } catch (err: any) {
+      console.error("Signup error:", err);
+      setError(err.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
     }
@@ -174,7 +195,7 @@ export default function Page() {
               <p className="mt-3 text-center text-sm text-gray-600">
                 Already have an account?{" "}
                 <Link
-                  href="/sign-in"
+                  href="/api/auth/login"
                   className="font-medium text-indigo-600 hover:text-indigo-500"
                 >
                   Sign in

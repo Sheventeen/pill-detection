@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +18,35 @@ export default function Page() {
       setError("Please enter both email and password.");
       return;
     }
-    console.log("Attempting login...");
+
+    try {
+      console.log("Attempting login...");
+
+      const response = await fetch("http://localhost:5812/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      // Handle non-OK responses
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed");
+      }
+
+      const data = await response.json();
+      console.log("Login successful:", data);
+
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Redirect after successful login
+      router.push("/analysis");
+    } catch (err: any) {
+      console.error("Login error:", err.message);
+      setError(err.message || "Something went wrong during login.");
+    }
   };
 
   return (
@@ -78,7 +108,7 @@ export default function Page() {
               <p className="mt-3 text-center text-sm text-gray-600">
                 Don't have an account?{" "}
                 <Link
-                  href="/sign-up"
+                  href="/api/auth/signup"
                   className="font-medium text-indigo-600 hover:text-indigo-500"
                 >
                   Sign up
