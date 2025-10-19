@@ -34,7 +34,7 @@ export default function Header() {
           <p className="text-white/70">Transactions have never been easier!</p>
           <div>
             <Link
-              href="/signup"
+              href="/api/auth/signup"
               className="hover:underline flex gap-1 justify-center items-center"
             >
               <span className="text-sm">Get started</span>
@@ -82,7 +82,7 @@ export default function Header() {
               <Link href="#call-to-action" className="hover:text-indigo-700">
                 Updates
               </Link>
-              <Link href="/sign-in">
+              <Link href="/api/auth/signup">
                 <button className="font-medium text-[17.5px] text-white px-5 py-2 hover:cursor-pointer rounded-lg bg-indigo-600 hover:bg-indigo-700">
                   Sign in
                 </button>
