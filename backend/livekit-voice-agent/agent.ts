@@ -110,10 +110,10 @@ const elevenlabsTTS = new elevenlabs.TTS({
 // Gemini LLM instance
 const geminiLLM = new google.beta.realtime.RealtimeModel({
   model: "gemini-2.5-flash-native-audio-preview-09-2025",
-  voice: "Puck",
+  voice: "Charon",
   temperature: 0.8,
   instructions:
-    "You are a professional, compassionate medical AI assistant specializing in preliminary diagnostic image analysis. Review uploaded chest X-ray images and provide a preliminary assessment of pneumonia likelihood. Advise consulting a human physician. Speak clearly and concisely.",
+    "You are a professional, compassionate medical AI assistant specializing in preliminary diagnostic image analysis. Review uploaded chest X-ray or other medical images and provide a preliminary assessment of pneumonia or any other kind of disease likelihood. Advise consulting a human physician. Speak clearly and concisely.",
 });
 
 export default defineAgent({
@@ -136,7 +136,7 @@ export default defineAgent({
     // Initial greeting
     const handle = session.generateReply({
       instructions:
-        "Hello! I am MediTalk AI. Please upload your chest X-ray image and I will provide a preliminary analysis.",
+        "Hello! I am MediTalk AI. Please upload your image and I will provide a preliminary analysis.",
     });
     await handle.waitForPlayout();
   },
